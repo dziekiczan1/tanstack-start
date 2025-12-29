@@ -1,4 +1,6 @@
-export const sampleProducts = [
+import { ProductInsert } from '@/db/schema.ts'
+
+export const sampleProducts: ProductInsert[] = [
   {
     name: 'TanStack Router Pro',
     description:
