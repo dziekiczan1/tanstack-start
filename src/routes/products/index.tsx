@@ -8,6 +8,7 @@ import {
 import { createFileRoute } from '@tanstack/react-router'
 import { sampleProducts } from '@/db/seed.ts'
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
+import { useQuery } from '@tanstack/react-query'
 
 const fetchProducts = createServerFn({ method: 'GET' }).handler(async () => {
   return sampleProducts
@@ -32,7 +33,12 @@ export const Route = createFileRoute('/products/')({
 })
 
 function RouteComponent() {
-  const data = Route.useLoaderData()
+  const products = Route.useLoaderData()
+  const { data } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => fetchProducts(),
+    initialData: products,
+  })
   return (
     <div className="space-y-6">
       <section className="space-y-4 max-w-6xl mx-auto">
