@@ -11,6 +11,7 @@ export const getRouter = () => {
 
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    defaultPreload: 'intent', // preload on hover/focus
   })
 
   return router
