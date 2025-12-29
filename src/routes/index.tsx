@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { ArrowRightIcon } from 'lucide-react'
 
 import {
   Card,
@@ -6,21 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { ArrowRightIcon } from 'lucide-react'
+import { sampleProducts } from '@/db/seed.ts'
+import { ProductCard } from '@/components/ProductCard.tsx'
 
 export const Route = createFileRoute('/')({
   component: App,
   loader: async () => {
-    // This runs on server during SSR AND on client during navigation
-    const response = await fetch('https://fakestoreapi.com/products')
-    const data = await response.json()
-    return { products: data.slice(0, 4) }
+    return { products: sampleProducts.slice(0, 3) }
   },
 })
 
 async function App() {
   const { products } = Route.useLoaderData()
-  console.log(products)
+
   return (
     <div className="space-y-12 bg-linear-to-b from-slate-50 via-white to-slate-50 p-6">
       <section>
@@ -69,7 +68,9 @@ async function App() {
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-6">
-            Products
+            {products.map((product, index) => (
+              <ProductCard product={product} key={`product-${index}`} />
+            ))}
           </div>
         </Card>
       </section>
