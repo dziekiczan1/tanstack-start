@@ -7,16 +7,32 @@ import {
 } from '@/components/ui/card'
 import { createFileRoute } from '@tanstack/react-router'
 import { sampleProducts } from '@/db/seed.ts'
+import { createMiddleware, createServerFn } from '@tanstack/react-start'
+
+const fetchProducts = createServerFn({ method: 'GET' }).handler(async () => {
+  return sampleProducts
+})
+
+const loggerMiddleware = createMiddleware().server(
+  async ({ next, request }) => {
+    console.log('logger', request.url, 'from', request.headers.get('origin'))
+    return next()
+  },
+)
 
 export const Route = createFileRoute('/products/')({
   component: RouteComponent,
   loader: async () => {
-    return { data: sampleProducts }
+    return fetchProducts()
+  },
+  server: {
+    middleware: [loggerMiddleware],
+    handlers: {},
   },
 })
 
 function RouteComponent() {
-  const { data } = Route.useLoaderData()
+  const data = Route.useLoaderData()
   return (
     <div className="space-y-6">
       <section className="space-y-4 max-w-6xl mx-auto">
