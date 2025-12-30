@@ -11,6 +11,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { ArrowLeftIcon, ShoppingBagIcon, SparklesIcon } from 'lucide-react'
 import { ProductSelect } from '@/db/schema.ts'
+import { RecommendedProducts } from '@/components/RecommendedProducts.tsx'
 
 const fetchProductById = createServerFn({ method: 'POST' })
   .inputValidator((data: { id: string }) => data)
@@ -20,6 +21,13 @@ const fetchProductById = createServerFn({ method: 'POST' })
     return product
   })
 
+const fetchRecommendedProducts = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const { getRecommendedProducts } = await import('@/data/products')
+    return getRecommendedProducts()
+  },
+)
+
 export const Route = createFileRoute('/products/$id')({
   component: RouteComponent,
   loader: async ({ params }) => {
@@ -28,11 +36,14 @@ export const Route = createFileRoute('/products/$id')({
     if (!product) {
       throw notFound()
     }
-    return { product }
+    // Return recommendedProducts as a Promise for Suspense
+    const recommendedProducts = fetchRecommendedProducts()
+    return { product, recommendedProducts }
   },
   head: async ({ loaderData: data }) => {
     const { product } = data as {
       product: ProductSelect
+      recommendedProducts: Promise<ProductSelect[]>
     }
     if (!product) {
       return {}
@@ -62,7 +73,7 @@ export const Route = createFileRoute('/products/$id')({
 })
 
 function RouteComponent() {
-  const { product } = Route.useLoaderData()
+  const { product, recommendedProducts } = Route.useLoaderData()
   return (
     <div>
       <Card className="max-w-4xl mx-auto p-6">
@@ -144,6 +155,7 @@ function RouteComponent() {
             </div>
           </div>
         </Card>
+        <RecommendedProducts recommendedProducts={recommendedProducts} />
       </Card>
     </div>
   )
