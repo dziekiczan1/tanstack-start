@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card'
+import { ProductSelect } from '@/db/schema.ts'
 
 const inventoryTone = {
   'in-stock': 'bg-emerald-50 text-emerald-600 border-emerald-100',
@@ -18,7 +19,7 @@ const inventoryTone = {
   preorder: 'bg-indigo-50 text-indigo-700 border-indigo-100',
 }
 
-export function ProductCard({ product }) {
+export function ProductCard({ product }: { product: ProductSelect }) {
   return (
     <Link
       to="/products/$id"

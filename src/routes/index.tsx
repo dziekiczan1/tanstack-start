@@ -7,13 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { sampleProducts } from '@/db/seed.ts'
 import { ProductCard } from '@/components/ProductCard.tsx'
+import { getRecommendedProducts } from '@/data/products.ts'
 
 export const Route = createFileRoute('/')({
   component: App,
   loader: async () => {
-    return { products: sampleProducts.slice(0, 3) }
+    const products = await getRecommendedProducts()
+    return { products }
   },
 })
 
