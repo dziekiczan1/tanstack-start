@@ -10,6 +10,7 @@ import {
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { ArrowLeftIcon, ShoppingBagIcon, SparklesIcon } from 'lucide-react'
+import { ProductSelect } from '@/db/schema.ts'
 
 const fetchProductById = createServerFn({ method: 'POST' })
   .inputValidator((data: { id: string }) => data)
@@ -28,6 +29,35 @@ export const Route = createFileRoute('/products/$id')({
       throw notFound()
     }
     return { product }
+  },
+  head: async ({ loaderData: data }) => {
+    const { product } = data as {
+      product: ProductSelect
+    }
+    if (!product) {
+      return {}
+    }
+    return {
+      meta: [
+        { name: 'description', content: product?.description },
+        { name: 'image', content: product?.image },
+        { name: 'title', content: product?.name },
+        {
+          name: 'canonical',
+          content:
+            process.env.NODE_ENV === 'production'
+              ? `https://production.shop/products/${product?.id}`
+              : `http://localhost:3000/products/${product?.id}` ||
+                `localhost:3000/products/${product?.id}`,
+        },
+        {
+          title: product?.name,
+        },
+        {
+          description: product?.description,
+        },
+      ],
+    }
   },
 })
 
