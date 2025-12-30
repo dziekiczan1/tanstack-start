@@ -12,6 +12,8 @@ import { createServerFn } from '@tanstack/react-start'
 import { ArrowLeftIcon, ShoppingBagIcon, SparklesIcon } from 'lucide-react'
 import { ProductSelect } from '@/db/schema.ts'
 import { RecommendedProducts } from '@/components/RecommendedProducts.tsx'
+import { Suspense } from 'react'
+import { Skeleton } from '@/components/ui/skeleton.tsx'
 
 const fetchProductById = createServerFn({ method: 'POST' })
   .inputValidator((data: { id: string }) => data)
@@ -155,7 +157,24 @@ function RouteComponent() {
             </div>
           </div>
         </Card>
-        <RecommendedProducts recommendedProducts={recommendedProducts} />
+        <div className="mb-6">
+          <Suspense
+            fallback={
+              <div>
+                <h2 className="text-2xl font-bold my-4">
+                  Recommended Products{' '}
+                </h2>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <Skeleton key={index} className="w-full h-48" />
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <RecommendedProducts recommendedProducts={recommendedProducts} />
+          </Suspense>
+        </div>
       </Card>
     </div>
   )
