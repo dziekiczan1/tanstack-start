@@ -8,18 +8,24 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ProductCard } from '@/components/ProductCard.tsx'
+import { createServerFn } from '@tanstack/react-start'
+
+const fetchProductsFn = createServerFn({ method: 'GET' }).handler(async () => {
+  const { getRecommendedProducts } = await import('@/data/products')
+  const products = await getRecommendedProducts()
+  return products
+})
 
 export const Route = createFileRoute('/')({
   component: App,
   loader: async () => {
-    const { getRecommendedProducts } = await import('@/data/products.ts')
-    const products = await getRecommendedProducts()
-    return { products }
+    // This runs on server during SSR AND on client during navigation
+    return fetchProductsFn()
   },
 })
 
 async function App() {
-  const { products } = Route.useLoaderData()
+  const products = Route.useLoaderData()
 
   return (
     <div className="space-y-12 bg-linear-to-b from-slate-50 via-white to-slate-50 p-6">
