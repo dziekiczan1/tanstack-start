@@ -8,10 +8,11 @@ import {
 import { createFileRoute } from '@tanstack/react-router'
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { useQuery } from '@tanstack/react-query'
-import { getAllProducts } from '@/data/products.ts'
 
 const fetchProducts = createServerFn({ method: 'GET' }).handler(async () => {
-  return await getAllProducts()
+  const { getAllProducts } = await import('@/data/products.ts')
+  const data = await getAllProducts()
+  return data
 })
 
 const loggerMiddleware = createMiddleware().server(

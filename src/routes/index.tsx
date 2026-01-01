@@ -8,11 +8,11 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ProductCard } from '@/components/ProductCard.tsx'
-import { getRecommendedProducts } from '@/data/products.ts'
 
 export const Route = createFileRoute('/')({
   component: App,
   loader: async () => {
+    const { getRecommendedProducts } = await import('@/data/products.ts')
     const products = await getRecommendedProducts()
     return { products }
   },
