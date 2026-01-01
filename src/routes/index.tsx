@@ -12,7 +12,7 @@ import { createServerFn } from '@tanstack/react-start'
 
 const fetchProductsFn = createServerFn({ method: 'GET' }).handler(async () => {
   const { getRecommendedProducts } = await import('@/data/products')
-  const products = await getRecommendedProducts()
+  const products = getRecommendedProducts()
   return products
 })
 
